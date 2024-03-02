@@ -24,7 +24,8 @@ struct MotorDataStruct
     uint32_t motor_number;
     MotorCallMode call_mode;
     union{
-        double percent_or_velocity;
+        double percent;
         MotorNeutralMode neutral_mode;
+        double velocity_turns_per_second;  
     };
 };
