@@ -2,7 +2,7 @@
 #include <thread>
 
 
-#include "SerialMotorCtrl.h"
+#include "../include/SerialMotorCtrl.h"
 
 
 int main(){

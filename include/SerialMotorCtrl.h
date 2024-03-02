@@ -13,7 +13,7 @@ public:
         MotorDataStruct mds;
         mds.motor_number = motor_number;
         mds.call_mode = MotorCallMode::PERCENT;
-        mds.percent_or_velocity = duty_cycle;
+        mds.percent = duty_cycle;
         this->send_command(mds);
     }
 
@@ -29,7 +29,7 @@ public:
         MotorDataStruct mds;
         mds.motor_number = motor_number;
         mds.call_mode = MotorCallMode::VELOCITY;
-        mds.percent_or_velocity = turns_per_second;
+        mds.velocity_turns_per_second = turns_per_second;
         this->send_command(mds);
     }
 

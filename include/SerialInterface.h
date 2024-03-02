@@ -1,15 +1,14 @@
 #pragma once
 #include <cstdint>
 
-constexpr int32_t MOTOR_MODE_PERCENT = 0;
-constexpr double MOTOR_COAST = 0;
-constexpr double MOTOR_BREAK = 1;
 
+// Enum to set neutral mode
 enum class MotorNeutralMode: uint32_t{
     MOTOR_COAST = 0,
     MOTOR_BREAK = 1
 };
 
+// Enum to set call mode
 enum class MotorCallMode : uint32_t
 {
     PERCENT = 0,
@@ -18,6 +17,7 @@ enum class MotorCallMode : uint32_t
     NEUTRAL_MODE = 16,
 };
 
+// Motor message struct
 #pragma pack(1)
 struct MotorDataStruct
 {
@@ -28,4 +28,20 @@ struct MotorDataStruct
         MotorNeutralMode neutral_mode;
         double velocity_turns_per_second;  
     };
+};
+
+// Defines Serial Message Types
+enum class SerialMsgType : uint32_t{
+    MotorMessage = 0
+};
+
+// Base message to be sent over serial
+#pragma pack(1)
+struct SerialMsg{
+    SerialMsgType type;
+    union
+    {
+        MotorDataStruct mds;
+    };
+    
 };
