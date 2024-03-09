@@ -172,14 +172,24 @@ again:
 
 void MotorSerialConnection::send_command(const MotorDataStruct &data)
 {
+    // Write XON to start comms
+    write_bytes(serial_fd, &XON, sizeof(XON));
+
+    // Wait for XON to start our sending
     char first_byte = 0;
     while (first_byte != XON)
     {
         read_bytes(serial_fd, &first_byte, 1);
     }
 
-    write_bytes(serial_fd, &data, sizeof(data));
+    SerialMsg msg;
+    msg.type = SerialMsgType::MotorMessage;
+    msg.mds = data;
+    write_bytes(serial_fd, &msg, sizeof(msg));
 
+    SerialResponse resp;
+    read_bytes(serial_fd, &resp, sizeof(resp));
+    
     char last_byte = 0;
     while (last_byte != XOFF)
     {
