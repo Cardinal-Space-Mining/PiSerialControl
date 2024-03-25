@@ -20,7 +20,7 @@ constexpr const char XOFF = 0x11;
 MotorSerialConnection::MotorSerialConnection(const char *port)
 {
 open_again:
-    serial_fd = open(port, O_RDWR);
+    serial_fd = open(port, O_RDWR | O_SYNC);
 
     // Check for errors
     if (serial_fd < 0)
@@ -103,6 +103,17 @@ flock_again:
 
 MotorSerialConnection::~MotorSerialConnection()
 {
+flock_again:
+    if (flock(serial_fd, LOCK_UN) == -1)
+    {
+        if (errno == EINTR)
+        {
+            goto flock_again;
+        }
+        std::printf("Error %i from flock: %s\n", errno, strerror(errno));
+        std::exit(EXIT_FAILURE);
+    }
+
 again:
     int ret_val = close(serial_fd);
 
@@ -140,7 +151,7 @@ again:
     if (r_value < (ssize_t)num_bytes)
     {
         num_bytes = num_bytes - r_value;
-        buff = (void*) ((size_t)buff + (size_t)num_bytes);
+        buff = (void *)((size_t)buff + (size_t)num_bytes);
         goto again;
     }
 }
@@ -165,7 +176,7 @@ again:
     if (r_value < (ssize_t)num_bytes)
     {
         num_bytes = num_bytes - r_value;
-        buff = (const void*) ((size_t)buff + (size_t)num_bytes);
+        buff = (const void *)((size_t)buff + (size_t)num_bytes);
         goto again;
     }
 }
@@ -189,7 +200,7 @@ void MotorSerialConnection::send_command(const MotorDataStruct &data)
 
     SerialResponse resp;
     read_bytes(serial_fd, &resp, sizeof(resp));
-    
+
     char last_byte = 0;
     while (last_byte != XOFF)
     {

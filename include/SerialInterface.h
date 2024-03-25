@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 
+#pragma pack(push, 1)
 // Enum to set neutral mode
 enum class MotorNeutralMode : uint32_t
 {
@@ -18,7 +19,6 @@ enum class MotorCallMode : uint32_t
 };
 
 // Motor message struct
-#pragma pack(1)
 struct MotorDataStruct
 {
     uint32_t motor_number;
@@ -38,7 +38,6 @@ enum class SerialMsgType : uint32_t
 };
 
 // Base message to be sent over serial
-#pragma pack(1)
 struct SerialMsg
 {
     SerialMsgType type;
@@ -54,3 +53,4 @@ enum class SerialResponse : uint8_t
     GENERAL_FAILURE = 1,
     INVALID_ARGUMENT = 2
 };
+#pragma pack(pop)
