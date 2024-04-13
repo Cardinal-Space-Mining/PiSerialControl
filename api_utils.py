@@ -4,7 +4,7 @@ import serial
 import time
 
 s = serial.Serial(
-    port='/dev/ttyUSB0',
+    port='/dev/ttyACM0',
     baudrate=230400
 )
 

@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <iostream>
 
 // Linux headers
 #include <fcntl.h>   // Contains file controls like O_RDWR
@@ -12,6 +13,9 @@
 #include <unistd.h>  // write(), read(), close()
 
 #include <sys/file.h> //flock()
+
+using std::cout;
+using std::endl;
 
 constexpr const char XON = 0x13;
 constexpr const char XOFF = 0x11;
@@ -133,6 +137,9 @@ again:
 
 void read_bytes(int fd, void *buff, size_t num_bytes)
 {
+
+    cout << "reading bytes" << endl;
+
 again:
     ssize_t r_value = read(fd, buff, num_bytes);
 
@@ -154,10 +161,13 @@ again:
         buff = (void *)((size_t)buff + (size_t)num_bytes);
         goto again;
     }
+
+    cout << "done reading bytes";
 }
 
 void write_bytes(int fd, const void *buff, size_t num_bytes)
 {
+    cout << "write bytes" << endl;
 again:
     ssize_t r_value = write(fd, buff, num_bytes);
 
@@ -179,12 +189,17 @@ again:
         buff = (const void *)((size_t)buff + (size_t)num_bytes);
         goto again;
     }
+    cout << "finished write bytes" << endl;
 }
 
 void MotorSerialConnection::send_command(const MotorDataStruct &data)
 {
+    cout << "begin of sending command" << endl;
+
     // Write XON to start comms
     write_bytes(serial_fd, &XON, sizeof(XON));
+
+    cout << "waiting for XON" << endl;
 
     // Wait for XON to start our sending
     char first_byte = 0;
@@ -193,17 +208,25 @@ void MotorSerialConnection::send_command(const MotorDataStruct &data)
         read_bytes(serial_fd, &first_byte, 1);
     }
 
+    cout << "got the XON" << endl;
+
     SerialMsg msg;
     msg.type = SerialMsgType::MotorMessage;
     msg.mds = data;
     write_bytes(serial_fd, &msg, sizeof(msg));
 
+    cout << "writing new message" << endl;
+
     SerialResponse resp;
     read_bytes(serial_fd, &resp, sizeof(resp));
+
+    cout << "waiting for XOFF" << endl;
 
     char last_byte = 0;
     while (last_byte != XOFF)
     {
         read_bytes(serial_fd, &last_byte, 1);
     }
+
+    cout << "got the XOFF" << endl;
 }
