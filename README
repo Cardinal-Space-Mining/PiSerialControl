@@ -1,0 +1,13 @@
+# PISERIALCONTROL
+
+
+In the case of not knowing the serial port that is running, run `python3 ViewSerialPort.py` to view open connections.
+
+Example result:
+
+![alt text](image.png)
+
+In this case: `/dev/ttyS0` is the RS-232 connection.
+
+#### Frappepanda
+- Serial port: `/dev/ttyS0`

@@ -8,7 +8,7 @@
 
 int main(){
 
-    MotorSerialConnection mtr_conn("/dev/ttyACM0");
+    MotorSerialConnection mtr_conn("/dev/ttyS0");
     std::cout << "starting \n";
     while(true){
         for (size_t i = 0; i < 101; i++)

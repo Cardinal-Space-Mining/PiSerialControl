@@ -138,8 +138,6 @@ again:
 void read_bytes(int fd, void *buff, size_t num_bytes)
 {
 
-    cout << "reading bytes" << endl;
-
 again:
     ssize_t r_value = read(fd, buff, num_bytes);
 
@@ -162,12 +160,10 @@ again:
         goto again;
     }
 
-    cout << "done reading bytes";
 }
 
 void write_bytes(int fd, const void *buff, size_t num_bytes)
 {
-    cout << "write bytes" << endl;
 again:
     ssize_t r_value = write(fd, buff, num_bytes);
 
@@ -189,7 +185,6 @@ again:
         buff = (const void *)((size_t)buff + (size_t)num_bytes);
         goto again;
     }
-    cout << "finished write bytes" << endl;
 }
 
 void MotorSerialConnection::send_command(const MotorDataStruct &data)
