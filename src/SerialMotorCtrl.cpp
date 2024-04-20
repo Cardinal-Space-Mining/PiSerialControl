@@ -156,7 +156,6 @@ again:
     if (r_value < (ssize_t)num_bytes)
     {
         num_bytes = num_bytes - r_value;
-        buff = (void *)((size_t)buff + (size_t)num_bytes);
         goto again;
     }
 
