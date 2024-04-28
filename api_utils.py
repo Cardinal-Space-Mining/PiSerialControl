@@ -96,8 +96,19 @@ def cycles():
         send_msg_func(4)
         time.sleep(4)
 
+def one_cycle():
+    send_msg_func(1)
+    time.sleep(25)
+    send_msg_func(2)
+    time.sleep(4)
+    send_msg_func(3)
+    time.sleep(4)
+    send_msg_func(4)
+    time.sleep(4)
+
 # start_stop_offload()
 # send_msg_func(4)
 #send_msg_func(3)
 # send_msg_func(1)
-cycles()
+# cycles()
+one_cycle()

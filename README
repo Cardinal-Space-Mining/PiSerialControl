@@ -11,3 +11,63 @@ In this case: `/dev/ttyS0` is the RS-232 connection.
 
 #### Frappepanda
 - Serial port: `/dev/ttyS0`
+
+
+### Connecting to the Pi to run autonomous cycles
+
+- open terminal `windows` then type terminal
+- ssh po@mochapanda
+- to run code: `sudo python3 api_utils.py`
+- then `enable autonomous` and code will start.
+
+#### moving the api_utils onto mochapanda
+- open terminal and go to directory/folder where api_utils.py is located
+- moving file `scp api_utils.py po@mochapanda:~` and enter password
+- the new file is on it.
+
+### Deploying code to RIO
+- open wpilib vscode
+- `ctrl + shift + P` and select `deploy robot code`
+    - should complete if it doenst make sure you are connected to robot and try again
+- code will start automatically
+
+
+#### changing mining speeds on the RIO code
+All constants are located in `Robot.h`
+
+motor speeds are declared at bottom
+```c++
+  static constexpr auto TRENCHER_MAX_VELO = 60_tps;
+  static constexpr auto HOPPER_BELT_MAX_VELO = 30_tps;
+  static constexpr auto HOPPER_BELT_MAX_MINING_VELO = 50_tps;
+  static constexpr auto TRACKS_MAX_VELO = 125_tps;
+  static constexpr auto TRACKS_MINING_MAX_VELO = 8_tps;
+  static constexpr auto HOPPER_ACTUATOR_MAX_VELO = .2; 
+```
+
+to adjust the hopper height (based off of potentiometer 0-1.0) adjust
+```c++
+  double offload_depth = .95;
+  double reg_traversal_depth = .5;
+  double mining_to_offload_depth = .45;
+  double mining_depth = .03;
+```
+
+if you want to change intervals on when the hopper moves during the mining cycle:
+- where `std::this_thread::sleep_for(...)` is replace time in the milliseconds parenthesis. this will change how long the belt moves
+- if you want to change how frequently it occurs change the last line `}, 50_ms);` changing the time before `_ms` to desired time in milliseconds
+```c++
+  AddPeriodic([&] {
+    if (is_mining) {
+
+      ctre::phoenix6::controls::VelocityDutyCycle hopper_belt_velo = -1.0 * HOPPER_BELT_MAX_MINING_VELO; 
+      hopper_belt.SetControl(hopper_belt_velo); 
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(150));
+
+      hopper_belt.Set(0);
+
+    }
+  }, 50_ms);
+```
+
