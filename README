@@ -9,48 +9,59 @@ Example result:
 
 In this case: `/dev/ttyS0` is the RS-232 connection.
 
-#### Frappepanda
+#### Frappepanda/Mochapanda
 - Serial port: `/dev/ttyS0`
 
 
-### Connecting to the Pi to run autonomous cycles
+### Connecting to the Pi to run autonomous cycle
 
-- open terminal `windows` then type terminal
-- ssh po@mochapanda
+- open terminal `windows`
+- Run `ssh po@mochapanda` while on Team07
+  - if hostname not found then do `ssh po@10.11.11.13` instead
 - to run code: `sudo python3 api_utils.py`
-- then `enable autonomous` and code will start.
+- then `enable autonomous` in FRC Driver Station and code will start.
 
-#### moving the api_utils onto mochapanda
+#### moving the api_utils onto mochapanda/frappepanda
 - open terminal and go to directory/folder where api_utils.py is located
 - moving file `scp api_utils.py po@mochapanda:~` and enter password
-- the new file is on it.
+- the new `api_utils.py` is on the mocha/frappepand.
+  - this will **replace** the `api_utils.py` that was there previously
 
 ### Deploying code to RIO
-- open wpilib vscode
+- open `wpilib vscode`
+- open folder containing rio code (`RioSerialControl`)
 - `ctrl + shift + P` and select `deploy robot code`
-    - should complete if it doenst make sure you are connected to robot and try again
-- code will start automatically
+    - should complete if it does not make sure you are connected to robot and try again
+- code will start automatically upon deploying
 
 
-#### changing mining speeds on the RIO code
+#### changing max speeds in the RIO code
 All constants are located in `Robot.h`
 
 motor speeds are declared at bottom
 ```c++
-  static constexpr auto TRENCHER_MAX_VELO = 60_tps;
-  static constexpr auto HOPPER_BELT_MAX_VELO = 30_tps;
-  static constexpr auto HOPPER_BELT_MAX_MINING_VELO = 50_tps;
-  static constexpr auto TRACKS_MAX_VELO = 125_tps;
-  static constexpr auto TRACKS_MINING_MAX_VELO = 8_tps;
-  static constexpr auto HOPPER_ACTUATOR_MAX_VELO = .2; 
+  static constexpr auto TRENCHER_MAX_VELO = 60_tps; // max speed for trencher motor while mining
+
+  static constexpr auto HOPPER_BELT_MAX_VELO = 30_tps; // max speed that the belt motor will move during offload
+
+  static constexpr auto HOPPER_BELT_MAX_MINING_VELO = 50_tps; // max speed the hopper belt motor moves automatically during mining operations (autonomous only)
+
+  static constexpr auto TRACKS_MAX_VELO = 125_tps; // max speed the track motors will move duirng normal traversal
+
+  static constexpr auto TRACKS_MINING_MAX_VELO = 8_tps; // max speed the track motors will move while mining
+
+  static constexpr auto HOPPER_ACTUATOR_MAX_VELO = .2; // max speed the hopper actuators will move in teleop. This is NOT used during autonomous cycles. It is instead .5, if you wish to change, adjust in start/stop mining/offload functions
 ```
 
 to adjust the hopper height (based off of potentiometer 0-1.0) adjust
 ```c++
-  double offload_depth = .95;
-  double reg_traversal_depth = .5;
-  double mining_to_offload_depth = .45;
-  double mining_depth = .03;
+  double offload_depth = .95; // how high the actuators will go while offloading. DO NOT set to 1.0, the actuators may never actually reach the highest point
+
+  double reg_traversal_depth = .5; // how high the actuators will be while autonmously moving around. Set to this height after every offload cycle
+
+  double mining_to_offload_depth = .45; // height of actuators during traversal after mining
+
+  double mining_depth = .03; // how low the actuators are during mining cycles. DO NOT LOWER this number. Potentiometer does not go to absolute 0. During testing the lowest it would reach consistently is this number.
 ```
 
 if you want to change intervals on when the hopper moves during the mining cycle:
