@@ -5,7 +5,7 @@ import time
 
 s = serial.Serial(
     port='/dev/ttyS0',
-    baudrate=9600
+    baudrate=115200
 )
 
 # root function to generate messages
@@ -21,6 +21,7 @@ def send_msg(func_num, motor_num, outputValue):
     # random buffer variable
     x = b''
 
+    print("writing")
     s.write(b'\x13')
 
     # xon message, reads till a xon
@@ -29,20 +30,74 @@ def send_msg(func_num, motor_num, outputValue):
 
     s.write(msg)
 
-    print()
     # listening for xoff
     while x != b'\x11':
         x = s.read(1)
-	    
-# template message
-def set(outputValue: float):
-	send_msg(0, 0, float(outputValue))
 
-# testing spins motors up and down quickly
-while True:
-    for i in range(101):
-        set(float(i/200))
-        time.sleep(0.01)
-    for i in range(101):
-        set(.5 - (i/200))
-        time.sleep(0.01)
+def send_msg_func(func_num):
+    parts = [struct.pack('<i', func_num)]
+
+    msg = b''
+    for part in parts:
+        msg = msg + part
+
+    x = b''
+    print("wrting");
+    s.write(b'\x13')
+    while x != b'\x13':
+        x = s.read(1)
+    print("got xon")
+    s.write(msg)
+    print("wrote msg")
+    while x != b'\x11':
+        x = s.read()
+    print("got xoff")
+
+# template message
+def set(outputValue: float, motornum1, motornum2):
+    send_msg(0, motornum1, float(outputValue))
+    send_msg(0, motornum2, float(outputValue)) 
+
+def setActuator(outputValue: float, motor_num):
+    send_msg(0, motor_num, float(outputValue))
+
+# test spins treads
+def move_treds():
+    while True:
+        for i in range(101):
+            set(.15, 0, 1)
+            time.sleep(0.01)
+        for i in range(101):
+            set(.15, 0, 1)
+            time.sleep(0.01)
+
+def start_stop_offload():
+    while True:
+        print("offloading")
+        send_msg_func(3)
+        time.sleep(4)
+        print("stop offload")
+        send_msg_func(4)
+        time.sleep(4)
+
+def actuator():
+    while True:
+        setActuator(.2, 5)
+        time.sleep(10)
+
+def cycles():
+    while True:
+        send_msg_func(1)
+        time.sleep(25)
+        send_msg_func(2)
+        time.sleep(4)
+        send_msg_func(3)
+        time.sleep(4)
+        send_msg_func(4)
+        time.sleep(4)
+
+# start_stop_offload()
+# send_msg_func(4)
+#send_msg_func(3)
+# send_msg_func(1)
+cycles()
