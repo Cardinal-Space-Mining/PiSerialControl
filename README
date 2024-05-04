@@ -19,7 +19,7 @@ In this case: `/dev/ttyS0` is the RS-232 connection.
 - Run `ssh po@mochapanda` while on Team07
   - if hostname not found then do `ssh po@10.11.11.13` instead
 - to run code: `sudo python3 api_utils.py`
-- then `enable autonomous` in FRC Driver Station and code will start.
+- then click `enable autonomous` in FRC Driver Station and code will start.
 
 #### moving the api_utils onto mochapanda/frappepanda
 - open terminal and go to directory/folder where api_utils.py is located
@@ -31,7 +31,7 @@ In this case: `/dev/ttyS0` is the RS-232 connection.
 - open `wpilib vscode`
 - open folder containing rio code (`RioSerialControl`)
 - `ctrl + shift + P` and select `deploy robot code`
-    - should complete if it does not make sure you are connected to robot and try again
+    - should complete, if it does not, make sure you are connected to robot and try again
 - code will start automatically upon deploying
 
 
